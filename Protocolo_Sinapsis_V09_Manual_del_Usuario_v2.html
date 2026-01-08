@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Protocolo Sinapsis V09 — Manual del Usuario</title>
+  <style>
+    :root{
+      --blue:#0B63CE;
+      --orange:#FF6B00;
+      --ink:#0E1A2B;
+      --muted:#5B6B82;
+      --line:#E7EDF6;
+      --bg:#FFFFFF;
+      --soft:#F7FAFF;
+      --soft2:#FBFCFF;
+      --shadow: 0 10px 30px rgba(10,25,50,.08);
+      --radius: 16px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--ink);
+      background:var(--bg);
+    }
+    a{color:var(--blue); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      background:rgba(255,255,255,.92);
+      backdrop-filter:saturate(160%) blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar-inner{
+      max-width:1200px; margin:0 auto;
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width:220px;
+    }
+    .logo{
+      width:40px; height:40px; border-radius:12px;
+      background:linear-gradient(135deg, rgba(11,99,206,.16), rgba(255,107,0,.14));
+      border:1px solid var(--line);
+      display:grid; place-items:center;
+      font-weight:900; color:var(--blue);
+      box-shadow: var(--shadow);
+    }
+    .brand-title{line-height:1.1}
+    .brand-title .ac{
+      font-weight:1000; letter-spacing:.2px;
+      font-size:16px;
+    }
+    .brand-title .ac .activa{color:var(--blue)}
+    .brand-title .ac .consultores{color:var(--orange)}
+    .brand-title .ps{
+      font-weight:900; font-size:12px; color:var(--muted);
+      margin-top:3px;
+    }
+    .cta{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px; border-radius:999px;
+      border:1px solid var(--line);
+      background:var(--soft2);
+      color:var(--ink);
+      font-weight:900; font-size:12px;
+    }
+    .pill strong{color:var(--blue)}
+    .wrap{
+      max-width:1200px; margin:0 auto;
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      gap:18px;
+      padding:18px 16px 60px;
+    }
+    /* ✅ Fix: evita que las secciones se vayan a la columna izquierda (bajo el menú) */
+    .wrap > section{ grid-column: 2; }
+    .wrap > .content{ grid-column: 2; }
+
+    @media (max-width: 980px){
+      .wrap{grid-template-columns: 1fr}
+      .wrap > section{ grid-column: 1; }
+      .wrap > .content{ grid-column: 1; }
+      .side{position:relative; top:auto}
+    }
+    .side{
+      position:sticky; top:74px; align-self:start;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, var(--soft), #fff);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .side-head{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+    }
+    .side-head h2{margin:0; font-size:14px; letter-spacing:.2px}
+    .search{
+      width:100%;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      outline:none;
+      background:#fff;
+      font-size:13px;
+    }
+    .nav{padding:10px; display:flex; flex-direction:column; gap:6px}
+    .nav a{
+      display:block;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid transparent;
+      color:var(--blue);
+      font-weight:900;
+      font-size:14px;
+      letter-spacing:.1px;
+    }
+    .nav a .navtext{display:block}
+    .nav a:focus{outline:none; box-shadow:0 0 0 3px rgba(11,99,206,.18)}
+    .nav a.active{
+      background: rgba(11,99,206,.08);
+      border-color: rgba(11,99,206,.20);
+    }
+    .nav a:hover{
+      background: rgba(11,99,206,.06);
+      border-color: rgba(11,99,206,.12);
+      text-decoration:none;
+    }
+    .content{min-width:0}
+    .hero{
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(11,99,206,.08), rgba(255,107,0,.06));
+      box-shadow: var(--shadow);
+      padding:18px;
+    }
+    .hero h1{margin:0; font-size:28px}
+    .hero p{margin:10px 0 0; color:var(--muted); line-height:1.5}
+    .tocHint{font-size:12px; color:var(--muted); margin-top:8px}
+    .meta{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:900; font-size:13px;
+      cursor:pointer;
+    }
+    .btn.primary{
+      border-color: rgba(11,99,206,.35);
+      background: rgba(11,99,206,.08);
+      color: var(--blue);
+    }
+    .btn.orange{
+      border-color: rgba(255,107,0,.35);
+      background: rgba(255,107,0,.08);
+      color: var(--orange);
+    }
+    section{
+      margin-top:18px;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background:#fff;
+      box-shadow: var(--shadow);
+      padding:18px;
+      scroll-margin-top: 90px;
+    }
+    .sec-title{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap}
+    .sec-title h2{margin:0; font-size:20px}
+    .sec-title .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      font-weight:900; font-size:12px;
+      border:1px solid var(--line);
+      background: var(--soft2);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .lead{margin:10px 0 0; color:var(--muted); line-height:1.55}
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:12px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+    .card{
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding:12px;
+      background: linear-gradient(180deg, var(--soft2), #fff);
+    }
+    .card h3{margin:0 0 6px; font-size:14px; display:flex; gap:10px; align-items:center}
+    .card p{margin:0; color:var(--muted); line-height:1.45; font-size:13px}
+    .mini{
+      margin-top:10px;
+      padding:12px;
+      border-radius:14px;
+      border:1px dashed rgba(11,99,206,.25);
+      background: rgba(11,99,206,.05);
+      color: var(--ink);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .mini strong{color:var(--blue)}
+    .warn{border-color: rgba(255,107,0,.35); background: rgba(255,107,0,.06)}
+    .ok{border-color: rgba(34,197,94,.25); background: rgba(34,197,94,.06)}
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:12px;
+      padding:2px 6px;
+      border:1px solid var(--line);
+      border-bottom-color:#dbe4f3;
+      border-radius:8px;
+      background:#fff;
+      color:var(--ink);
+      font-weight:900;
+      white-space:nowrap;
+    }
+    .note{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background: #fff;
+      margin-top:12px;
+    }
+    .note .icon{font-size:18px; line-height:1.1}
+    .note .text{font-size:13px; color:var(--muted); line-height:1.5}
+    .note .text strong{color:var(--blue)}
+    .foot{margin-top:16px; text-align:center; color:var(--muted); font-size:12px}
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="logo" aria-label="Activa Consultores">AC</div>
+        <div class="brand-title">
+          <div class="ac"><span class="activa">Activa</span> <span class="consultores">Consultores</span></div>
+          <div class="ps">Protocolo Sinapsis V09 — Manual del Usuario</div>
+        </div>
+      </div>
+      <div class="cta">
+        <span class="pill">📌 Mapa: <strong>OSM</strong> (sin key)</span>
+        <span class="pill">🧠 Predictivo: <strong>Riesgo + MTBF</strong></span>
+        <a class="pill" href="#inicio">⬆️ Ir al inicio</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" id="inicio">
+    <aside class="side">
+      <div class="side-head">
+        <h2>🧭 Navegación</h2>
+        <input id="navSearch" class="search" placeholder="Buscar sección… (ej: MTBF, Data Hub)" />
+        <div class="tocHint">Tip: usa <span class="kbd">Ctrl</span> + rueda para zoom en mapas.</div>
+      </div>
+      <nav class="nav" id="nav">
+        <a href="#vision"><span class="navtext">Visión y alcance industrial</span></a>
+        <a href="#nomenclaturas"><span class="navtext">Nomenclaturas</span></a>
+        <a href="#home"><span class="navtext">Dashboard Home</span></a>
+        <a href="#proyectos"><span class="navtext">Proyectos & Tareas</span></a>
+        <a href="#evops"><span class="navtext">EV Ops Carga</span></a>
+        <a href="#predictivo"><span class="navtext">Monitor Predictivo (Riesgo)</span></a>
+        <a href="#mtbf"><span class="navtext">MTBF (resiliencia)</span></a>
+        <a href="#datahub"><span class="navtext">EV Data Hub</span></a>
+        <a href="#kpi"><span class="navtext">KPI Analytics</span></a>
+        <a href="#cache"><span class="navtext">Sinapsis Neural Cache</span></a>
+        <a href="#crosspoll"><span class="navtext">Cross‑Pollination 48h</span></a>
+        <a href="#seguridad"><span class="navtext">Seguridad operativa y ética</span></a>
+        <a href="#export"><span class="navtext">Exportables y reporting</span></a>
+        <a href="#operacion"><span class="navtext">Operación en terreno</span></a>
+        <a href="#troubleshooting"><span class="navtext">Solución de problemas</span></a>
+      </nav>
+    </aside>
+
+    <section class="content hero">
+      <h1>Protocolo Sinapsis V09 — Manual del Usuario</h1>
+      <p>
+        Este manual explica <strong>qué hace</strong> cada módulo, <strong>cómo se usa</strong> y <strong>qué decisiones industriales habilita</strong>.
+        Está diseñado para lectura rápida, navegación clara y retención (con iconos y reglas simples).
+      </p>
+      <div class="meta">
+        <button class="btn primary" onclick="document.querySelector('#evops').scrollIntoView({behavior:'smooth'})">⚡ Ir a EV Ops</button>
+        <button class="btn orange" onclick="document.querySelector('#predictivo').scrollIntoView({behavior:'smooth'})">⚠️ Ir a Predictivo</button>
+        <button class="btn" onclick="window.print()">🖨️ Imprimir / PDF</button>
+      </div>
+      <div class="note">
+        <div class="icon">✅</div>
+        <div class="text">
+          Recomendación: para presentaciones ejecutivas, usa el mapa con zoom controlado:
+          <strong><span class="kbd">Ctrl</span> + rueda</strong>. Evita que se mueva toda la página.
+        </div>
+      </div>
+    </section>
+
+    <section id="vision">
+      <div class="sec-title">
+        <h2>🎯 Visión y alcance industrial</h2>
+        <div class="tag">Uso: operación + decisión</div>
+      </div>
+      <p class="lead">
+        Protocolo Sinapsis es una plataforma para <strong>operar, diagnosticar y priorizar</strong> sistemas (p. ej., infraestructura de carga EV),
+        combinando <strong>datos</strong>, <strong>reglas</strong> y <strong>capas predictivas</strong> sin ejecutar acciones peligrosas de forma automática.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>🏭 Aplicación en industria</h3><p>Prioriza mantenimiento, reduce caídas, mejora uptime y genera tickets con contexto verificable.</p></div>
+        <div class="card"><h3>🧠 IA con criterio</h3><p>Primero datos y reglas; luego IA para explicar, resumir y sugerir (no para “mandar”).</p></div>
+        <div class="card"><h3>📍 En terreno</h3><p>Mapa + contexto por comuna acelera decisiones: qué revisar, dónde y con qué prioridad.</p></div>
+        <div class="card"><h3>🛡️ Seguridad</h3><p>Modo “solo lectura”: recomienda y crea tickets; no ejecuta acciones críticas.</p></div>
+      </div>
+    </section>
+
+    <section id="nomenclaturas">
+      <div class="sec-title">
+        <h2>🔤 Nomenclaturas (rápidas)</h2>
+        <div class="tag">Uso: lectura universal</div>
+      </div>
+      <p class="lead">
+        Estas siglas aparecen en EV Ops, Predictivo y reportes. El objetivo es que cualquiera en la reunión las entienda.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>⚡ kW</h3><p>Potencia nominal del cargador. 7–22 kW (media) · 50–60+ kW (rápida).</p></div>
+        <div class="card"><h3>🔌 V</h3><p>Voltaje (V). Caídas repetidas pueden anticipar fallas eléctricas o conexión débil.</p></div>
+        <div class="card"><h3>🧲 A</h3><p>Corriente (A). Picos anómalos pueden anticipar sobrecargas o conectores con problemas.</p></div>
+        <div class="card"><h3>⚠️ Riesgo</h3><p>Índice (0–100) derivado de señales: estado, cola, ocupación y eventos 24h.</p></div>
+        <div class="card"><h3>⏱️ MTBF</h3><p>Tiempo promedio entre fallas. Ayuda a planificar mantenimiento y cuadrillas.</p></div>
+        <div class="card"><h3>🧪 μC</h3><p>Microcortes: cortes breves que degradan continuidad aunque no siempre se vean.</p></div>
+      </div>
+      <div class="mini ok">
+        <strong>Regla práctica:</strong> Riesgo alto + MTBF bajo → prioriza inspección antes de que la estación caiga en horario peak.
+      </div>
+    </section>
+
+    <section id="home">
+      <div class="sec-title">
+        <h2>🏠 Dashboard Home</h2>
+        <div class="tag">Uso: resumen ejecutivo</div>
+      </div>
+      <p class="lead">
+        Punto de entrada para validar estado general del sistema y asegurar que módulos clave (mapa, navegación, persistencia) están operativos.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>✅ Estado</h3><p>Confirma que la app está estable y lista. Ideal para “abrir la reunión”.</p></div>
+        <div class="card"><h3>🧭 Navegación</h3><p>Acceso directo a EV Ops, Predictivo y Data Hub sin perder contexto.</p></div>
+      </div>
+      <div class="mini">
+        <strong>Uso recomendado:</strong> Home → EV Ops (situación) → Predictivo/MTBF (priorización) → Ticket (acción).
+      </div>
+    </section>
+
+    <section id="proyectos">
+      <div class="sec-title">
+        <h2>🎯 Proyectos & Tareas</h2>
+        <div class="tag">Uso: gestión + trazabilidad</div>
+      </div>
+      <p class="lead">
+        Convierte hallazgos en <strong>acciones</strong>. Útil para seguimiento de mantenimiento, SLA y continuidad operacional.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>➕ Crear proyecto</h3><p>Contenedor de trabajo (ej: “EV Ops”, “Terreno semana 2”).</p></div>
+        <div class="card"><h3>🧾 Ticket → tarea</h3><p>Ticket creado en EV Ops/Predictivo llega como tarea con contexto.</p></div>
+        <div class="card"><h3>⚙️ Estados</h3><p>To‑do / Doing / Done para priorizar y cerrar ciclos.</p></div>
+        <div class="card"><h3>🔁 Loop 48h</h3><p>Si queda Doing >48h, aparece Cross‑Pollination (con botón Autorizar).</p></div>
+      </div>
+    </section>
+
+    <section id="evops">
+      <div class="sec-title">
+        <h2>⚡ EV Ops Carga</h2>
+        <div class="tag">Uso: operación diaria</div>
+      </div>
+      <p class="lead">
+        Mapa vivo y estado operativo: disponibilidad, cola, ocupación y ubicación. Sirve para monitoreo, detección de puntos críticos y tickets accionables.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>🗺️ Mapa vivo</h3><p>Colores por estado: disponible / con cola / fuera de servicio.</p></div>
+        <div class="card"><h3>🔎 Buscar + filtrar</h3><p>Filtro por comuna y búsqueda por texto.</p></div>
+        <div class="card"><h3>🔁 Actualización</h3><p>Modo demo/simulación para mostrar dinámica (luego se conecta a datos reales).</p></div>
+        <div class="card"><h3>🧾 Crear ticket</h3><p>Envía contexto a Proyectos & Tareas para seguimiento.</p></div>
+      </div>
+      <div class="mini warn"><strong>Zoom seguro:</strong> usa <span class="kbd">Ctrl</span> + rueda dentro del mapa.</div>
+    </section>
+
+    <section id="predictivo">
+      <div class="sec-title">
+        <h2>⚠️ Monitor Predictivo (Riesgo)</h2>
+        <div class="tag">Uso: priorización preventiva</div>
+      </div>
+      <p class="lead">
+        Calcula riesgo con señales observables (estado, cola, ocupación, eventos 24h). Se usa para anticipar fallas y ordenar inspecciones.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>🔎 Escanear ahora</h3><p>Calcula V↓, A↑, μC (24h) y score de riesgo por estación.</p></div>
+        <div class="card"><h3>🎨 Señalética</h3><p>Verde/bajo · amarillo/medio · rojo/alto (lista y mapa).</p></div>
+        <div class="card"><h3>🧾 Ticket desde riesgo</h3><p>Genera tarea con razones: caídas V, picos A, microcortes.</p></div>
+        <div class="card"><h3>🛡️ Solo lectura</h3><p>No ejecuta acciones peligrosas. Solo recomienda y organiza.</p></div>
+      </div>
+    </section>
+
+    <section id="mtbf">
+      <div class="sec-title">
+        <h2>⏱️ MTBF (Resiliencia energética)</h2>
+        <div class="tag">Uso: planificación</div>
+      </div>
+      <p class="lead">
+        MTBF proyectado indica “cuánto aguanta” una estación según comportamiento reciente. Ayuda a programar revisiones y reducir fallas en horas críticas.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>🧾 MTBF por estación</h3><p>Visible en Predictivo (incluye ventana probable).</p></div>
+        <div class="card"><h3>🏙️ MTBF por comuna</h3><p>Visión territorial: prioriza cuadrillas por zona.</p></div>
+        <div class="card"><h3>🧩 Criterios de falla</h3><p>Offline sostenido, μC repetidos, V↓ alta, A↑ alta.</p></div>
+        <div class="card"><h3>🎛️ Umbrales por estación</h3><p>Aprenden del histórico local para bajar falsos positivos.</p></div>
+      </div>
+      <div class="mini"><strong>Interpretación:</strong> MTBF bajo = alta probabilidad de falla pronto (planificación, no certeza).</div>
+    </section>
+
+    <section id="datahub">
+      <div class="sec-title">
+        <h2>🧩 EV Data Hub</h2>
+        <div class="tag">Uso: origen de verdad</div>
+      </div>
+      <p class="lead">
+        Centraliza datos y estados. Conecta fuentes oficiales y alimenta EV Ops y Predictivo con información consistente.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>📦 Catálogo</h3><p>Lista estaciones con lat/lng, potencia y metadatos.</p></div>
+        <div class="card"><h3>🎯 Ir a EV Ops</h3><p>Selecciona una estación y abre su contexto operativo.</p></div>
+        <div class="card"><h3>🔄 Integración futura</h3><p>Centro de sincronización cuando conectemos datos reales.</p></div>
+        <div class="card"><h3>🧼 Nombres limpios</h3><p>Mejor lectura ejecutiva y menos ruido.</p></div>
+      </div>
+    </section>
+
+    <section id="kpi">
+      <div class="sec-title">
+        <h2>📊 KPI Analytics</h2>
+        <div class="tag">Uso: comité</div>
+      </div>
+      <p class="lead">
+        KPIs para decisiones: uptime, fuera de servicio, demanda y colas. Ideal para SLA, inversión y priorización.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>📈 Uptime</h3><p>Disponibilidad global del sistema.</p></div>
+        <div class="card"><h3>🧯 Fuera de servicio</h3><p>Conteo directo de estaciones caídas.</p></div>
+        <div class="card"><h3>🚦 Demanda / cola</h3><p>Identifica presión operativa y cuellos de botella.</p></div>
+        <div class="card"><h3>🧩 Relación con MTBF</h3><p>KPI muestra “hoy”; MTBF ayuda a anticipar “mañana”.</p></div>
+      </div>
+    </section>
+
+    <section id="cache">
+      <div class="sec-title">
+        <h2>🗄️ Sinapsis Neural Cache</h2>
+        <div class="tag">Uso: rendimiento</div>
+      </div>
+      <p class="lead">
+        Optimiza localStorage para escalar sin lentitud: compresión, limpieza de logs y persistencia mínima.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>🧼 Limpieza automática</h3><p>Elimina logs antiguos por antigüedad y tamaño.</p></div>
+        <div class="card"><h3>🧳 Persistencia mínima</h3><p>Guarda decisiones y evidencias, no “ruido infinito”.</p></div>
+      </div>
+    </section>
+
+    <section id="crosspoll">
+      <div class="sec-title">
+        <h2>🔁 Cross‑Pollination 48h</h2>
+        <div class="tag">Uso: romper loops</div>
+      </div>
+      <p class="lead">
+        Si una tarea queda Doing >48h, aparece sugerencia y botón <strong>Autorizar</strong> para derivar a especialista Debug con contexto.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>⏳ Loop</h3><p>Detección automática de estancamiento.</p></div>
+        <div class="card"><h3>✅ Autorizar</h3><p>Derivación controlada por humano (no automática).</p></div>
+        <div class="card"><h3>📦 Contexto</h3><p>Estación, riesgo, razones, acciones previas y timestamps.</p></div>
+        <div class="card"><h3>🧾 Registro</h3><p>Trazabilidad local del handoff.</p></div>
+      </div>
+      <div class="mini warn"><strong>Ética:</strong> sin tu autorización no se realiza el cambio.</div>
+    </section>
+
+    <section id="seguridad">
+      <div class="sec-title">
+        <h2>🛡️ Seguridad operativa y ética</h2>
+        <div class="tag">Uso: confianza</div>
+      </div>
+      <p class="lead">
+        Recomendaciones sí; acciones críticas no. Tickets y evidencia antes de cualquier decisión operativa.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>🚫 No desconecta</h3><p>La app no ejecuta comandos sobre infraestructura.</p></div>
+        <div class="card"><h3>🧾 Evidencia</h3><p>Razones medibles para auditoría y comité.</p></div>
+        <div class="card"><h3>👤 Autorización</h3><p>Derivaciones y cambios se confirman por botón.</p></div>
+        <div class="card"><h3>🔒 Privacidad local</h3><p>Persistencia mínima y sin datos sensibles innecesarios.</p></div>
+      </div>
+    </section>
+
+    <section id="export">
+      <div class="sec-title">
+        <h2>⬇️ Exportables y reporting</h2>
+        <div class="tag">Uso: seguimiento</div>
+      </div>
+      <p class="lead">
+        Exporta hallazgos para comité, auditoría y seguimiento semanal sin depender de la UI.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>🧾 Export JSON</h3><p>Incluye estaciones, estados, riesgo/MTBF y timestamp.</p></div>
+        <div class="card"><h3>📌 Evidencias</h3><p>Razones de riesgo viajan con el ticket.</p></div>
+      </div>
+    </section>
+
+    <section id="operacion">
+      <div class="sec-title">
+        <h2>🧰 Operación en terreno</h2>
+        <div class="tag">Uso: demo</div>
+      </div>
+      <p class="lead">
+        Para evitar fallas en presentaciones: abre por servidor local y usa zoom controlado del mapa.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>🌐 Servidor local</h3><p><span class="kbd">python3 -m http.server 8000</span> y abrir <span class="kbd">http://localhost:8000/</span></p></div>
+        <div class="card"><h3>🖱️ Zoom</h3><p><span class="kbd">Ctrl</span> + rueda dentro del mapa.</p></div>
+        <div class="card"><h3>📶 Internet</h3><p>El mapa base (OSM) necesita red para tiles.</p></div>
+        <div class="card"><h3>🎤 Guion</h3><p>Home → EV Ops → Predictivo/MTBF → Ticket.</p></div>
+      </div>
+    </section>
+
+    <section id="troubleshooting">
+      <div class="sec-title">
+        <h2>🧯 Solución de problemas</h2>
+        <div class="tag">Uso: rápido</div>
+      </div>
+      <p class="lead">
+        Checklist rápido cuando algo no se ve.
+      </p>
+      <div class="grid">
+        <div class="card"><h3>🗺️ Sin mapa</h3><p>Verifica internet y evita <span class="kbd">file://</span>. Usa servidor local.</p></div>
+        <div class="card"><h3>⚫ Pantalla negra</h3><p>Revisa consola (F12). Primer error suele ser el culpable.</p></div>
+        <div class="card"><h3>🧭 No navega</h3><p>Refresca (Ctrl+R). Si persiste, limpia localStorage del sitio.</p></div>
+        <div class="card"><h3>🐭 Scroll molesto</h3><p>Usa <span class="kbd">Ctrl</span> + rueda para zoom en mapa.</p></div>
+      </div>
+      <div class="foot">Confidencial · <span style="color:var(--blue);font-weight:900">Activa</span> <span style="color:var(--orange);font-weight:900">Consultores</span> · Protocolo Sinapsis V09</div>
+    </section>
+  </main>
+
+  <script>
+    (function(){
+      const input = document.getElementById('navSearch');
+      const nav = document.getElementById('nav');
+      const items = Array.from(nav.querySelectorAll('a'));
+      function normalize(s){ return (s||'').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,''); }
+      input.addEventListener('input', () => {
+        const q = normalize(input.value.trim());
+        items.forEach(a => {
+          const t = normalize(a.textContent);
+          a.style.display = (!q || t.includes(q)) ? 'flex' : 'none';
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    // ✅ Marca el ítem activo del menú al hacer click o al hacer scroll
+    (function(){
+      const links = Array.from(document.querySelectorAll('#nav a'));
+      const sections = links
+        .map(a => document.querySelector(a.getAttribute('href')))
+        .filter(Boolean);
+
+      function setActiveByHash(hash){
+        links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === hash));
+      }
+
+      links.forEach(a => a.addEventListener('click', () => setActiveByHash(a.getAttribute('href'))));
+
+      const io = new IntersectionObserver((entries) => {
+        const visible = entries.filter(e => e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+        if(!visible) return;
+        const id = '#' + visible.target.id;
+        setActiveByHash(id);
+      }, { root: null, threshold: [0.15, 0.25, 0.35, 0.5, 0.65] });
+
+      sections.forEach(s => io.observe(s));
+
+      // Inicial
+      if(location.hash){ setActiveByHash(location.hash); }
+    })();
+  </script>
+
+</body>
+</html>
